@@ -18,6 +18,8 @@
 
 </div>
 
+![SignalWatch live dashboard](docs/images/dashboard.png)
+
 ## The project in one sentence
 
 SignalWatch watches [Hacker News](https://news.ycombinator.com/), filters stories against tracked topics, uses an LLM to analyze the relevant ones with **strict, schema-constrained output**, stores everything in Postgres, and pushes high-signal alerts to **Telegram** and **Discord** — each channel delivered independently through an authenticated n8n webhook.
@@ -33,6 +35,11 @@ SignalWatch watches [Hacker News](https://news.ycombinator.com/), filters storie
 This is not a demo toy. It is a running pipeline with a deterministic pre-filter that keeps LLM spend predictable, strict typed AI output re-validated before it's trusted, an idempotent Postgres log, and independent per-channel delivery — production concerns, not a screenshot.
 
 ## Architecture
+
+![SignalWatch system architecture](docs/images/architecture.png)
+
+<details>
+<summary>Text version of the diagram</summary>
 
 ```mermaid
 flowchart LR
@@ -54,6 +61,8 @@ flowchart LR
     style DB fill:#3182ce,color:#fff
     style N8N fill:#dd6b20,color:#fff
 ```
+
+</details>
 
 ## How the pipeline works
 
