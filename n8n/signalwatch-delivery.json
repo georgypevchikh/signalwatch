@@ -1,0 +1,149 @@
+{
+  "name": "SignalWatch Delivery",
+  "_comment": "Reference export of the n8n delivery workflow. Secrets (chat id, Discord webhook URL, Header Auth value) are redacted — replace the <PLACEHOLDER> values with your own before import. n8n nests the incoming POST body under $json.body, so all expressions read via .body.",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "signalwatch",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.body.channel }}",
+              "rightValue": "telegram",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [220, 0],
+      "name": "Is Telegram?"
+    },
+    {
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "={{ '🔔 *' + $('Webhook').item.json.body.message.urgency.toUpperCase() + '* | ' + $('Webhook').item.json.body.message.category + '\\n\\n*' + $('Webhook').item.json.body.message.title + '*\\n\\n' + $('Webhook').item.json.body.message.summary + '\\n\\n💡 *Why it matters:* ' + $('Webhook').item.json.body.message.whyItMatters + '\\n\\n🎯 *Action:* ' + $('Webhook').item.json.body.message.suggestedAction + '\\n\\nConfidence: ' + $('Webhook').item.json.body.message.confidence + '%' + ($('Webhook').item.json.body.message.url ? '\\n\\n🔗 ' + $('Webhook').item.json.body.message.url : '') }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [460, -100],
+      "name": "Telegram"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "<DISCORD_WEBHOOK_URL>",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: '🔔 **' + $('Webhook').item.json.body.message.urgency.toUpperCase() + '** | ' + $('Webhook').item.json.body.message.category + '\\n\\n**' + $('Webhook').item.json.body.message.title + '**\\n\\n' + $('Webhook').item.json.body.message.summary + '\\n\\n💡 **Why it matters:** ' + $('Webhook').item.json.body.message.whyItMatters + '\\n\\n🎯 **Action:** ' + $('Webhook').item.json.body.message.suggestedAction + '\\n\\nConfidence: ' + $('Webhook').item.json.body.message.confidence + '%' + ($('Webhook').item.json.body.message.url ? '\\n\\n🔗 ' + $('Webhook').item.json.body.message.url : '') }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 100],
+      "name": "Discord Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ deliveryId: $('Webhook').item.json.body.deliveryId, delivered: true }) }}"
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [700, -100],
+      "name": "Success Response TG"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ deliveryId: $('Webhook').item.json.body.deliveryId, delivered: true }) }}"
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [700, 100],
+      "name": "Success Response DC"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Telegram?": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Discord Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Success Response TG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord Webhook": {
+      "main": [
+        [
+          {
+            "node": "Success Response DC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

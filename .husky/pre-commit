@@ -1,0 +1,33 @@
+#!/bin/sh
+
+echo "🔒 Checking for secrets in staged files..."
+
+PATTERNS='(sk-proj-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|sbp_[A-Za-z0-9]{20,}|eyJhbGciOi[A-Za-z0-9_-]{50,}|ghp_[A-Za-z0-9]{36}|xoxb-[0-9]{10,}|service_role["\s:=]+ey[A-Za-z0-9_-]{50,})'
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+FOUND=0
+for file in $STAGED; do
+  if [ -f "$file" ]; then
+    RESULT=$(grep -nE "$PATTERNS" "$file" 2>/dev/null || true)
+    if [ -n "$RESULT" ]; then
+      echo "❌ Possible secret in $file:"
+      echo "$RESULT"
+      FOUND=1
+    fi
+  fi
+done
+
+if [ "$FOUND" -eq 1 ]; then
+  echo ""
+  echo "BLOCKED: Remove secrets before committing."
+  echo "Keys belong in .env.local (gitignored) or GitHub Secrets."
+  exit 1
+fi
+
+echo "✅ No secrets detected."
+npm test
