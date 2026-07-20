@@ -12,6 +12,9 @@
     "ingest": "npx tsx scripts/ingest.ts",
     "prepare": "husky"
   },
+  "overrides": {
+    "postcss": "^8.5.10"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.109.0",
     "dotenv": "^17.4.2",
