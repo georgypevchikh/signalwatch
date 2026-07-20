@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { getEnv } from "@/lib/env";
+import { getSupabaseEnv } from "@/lib/env";
 
 export function createServerClient() {
-  const env = getEnv();
+  const env = getSupabaseEnv();
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const ws = require("ws");
   return createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, {
