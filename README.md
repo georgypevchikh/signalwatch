@@ -6,7 +6,7 @@
 
 **Scheduled ingestion · deterministic pre-filter · schema-constrained LLM analysis · durable Postgres log · independent multi-channel delivery**
 
-[![Live Dashboard](https://img.shields.io/badge/Live_dashboard-Open-635BFF?style=for-the-badge)](https://signalwatch-one.vercel.app)
+[![Live Dashboard](https://img.shields.io/badge/Dashboard-Open-635BFF?style=for-the-badge)](https://signalwatch-one.vercel.app)
 [![CI](https://img.shields.io/github/actions/workflow/status/georgypevchikh/signalwatch/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/georgypevchikh/signalwatch/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js_16-111111?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -18,21 +18,21 @@
 
 </div>
 
-![SignalWatch live dashboard](docs/images/dashboard.png)
+![SignalWatch dashboard during the July 2026 run](docs/images/dashboard.png)
 
 ## The project in one sentence
 
-SignalWatch watches [Hacker News](https://news.ycombinator.com/), filters stories against tracked topics, uses an LLM to analyze the relevant ones with **strict, schema-constrained output**, stores everything in Postgres, and pushes high-signal alerts to **Telegram** and **Discord** — each channel delivered independently through an authenticated n8n webhook.
+SignalWatch watched [Hacker News](https://news.ycombinator.com/), filters stories against tracked topics, uses an LLM to analyze the relevant ones with **strict, schema-constrained output**, stores everything in Postgres, and pushes high-signal alerts to **Telegram** and **Discord** — each channel delivered independently through an authenticated n8n webhook.
 
 |  |  |
 |---|---|
-| **Status** | Live and publicly deployed |
+| **Status** | Built and run July–September 2026: 504 scheduled runs, 150 successful Telegram/Discord deliveries before the n8n host went offline. Paused since September 2026; code and dashboard stay public. |
 | **Role** | Product Engineer — architecture, implementation, deployment |
 | **Shape** | Scheduled worker (GitHub Actions) + read-only Next.js dashboard |
 | **Dashboard** | [Open the live dashboard](https://signalwatch-one.vercel.app) |
 | **What it proves** | API ingestion → bounded LLM cost → typed AI output → durable audit log → idempotent multi-channel delivery |
 
-This is not a demo toy. It is a running pipeline with a deterministic pre-filter that keeps LLM spend predictable, strict typed AI output re-validated before it's trusted, an idempotent Postgres log, and independent per-channel delivery — production concerns, not a screenshot.
+This was not a demo toy. It ran as a scheduled pipeline for nine weeks, with a deterministic pre-filter that keeps LLM spend predictable, strict typed AI output re-validated before it's trusted, an idempotent Postgres log, and independent per-channel delivery — production concerns, not a screenshot.
 
 ## Architecture
 
@@ -111,7 +111,7 @@ npm run lint
 npm run build
 ```
 
-CI (`.github/workflows/ci.yml`) runs typecheck, lint, tests, build and a production `npm audit` on every push. Scheduled ingestion (`.github/workflows/ingest.yml`) runs every 2 hours.
+CI (`.github/workflows/ci.yml`) runs typecheck, lint, tests, build and a production `npm audit` on every push. Scheduled ingestion (`.github/workflows/ingest.yml`) ran every 2 hours (currently disabled).
 
 ## Configuring what it watches
 
